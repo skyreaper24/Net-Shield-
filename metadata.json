@@ -1,0 +1,6 @@
+{
+  "name": "NetShield",
+  "description": "A production-grade system-wide DNS ad-blocker and privacy guard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
