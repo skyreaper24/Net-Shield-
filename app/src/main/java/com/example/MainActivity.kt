@@ -136,6 +136,125 @@ fun MainDashboardScreen(modifier: Modifier = Modifier) {
         }
     }
 
+    var showLimitationsDialog by remember { mutableStateOf(false) }
+
+    if (showLimitationsDialog) {
+        AlertDialog(
+            onDismissRequest = { showLimitationsDialog = false },
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = null,
+                        tint = Color(0xFF38BDF8),
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "NetShield Capabilities & Limits",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                }
+            },
+            text = {
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth().heightIn(max = 400.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    item {
+                        Text(
+                            text = "NetShield operates as a lightweight, local device-wide DNS filtering gateway. It reads queried domain names locally and resolves clean queries via an encrypted upstream DNS (Cloudflare 1.1.1.1).",
+                            style = MaterialTheme.typography.bodySmall.copy(color = Color(0xFF94A3B8))
+                        )
+                    }
+
+                    item {
+                        Card(
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFF0F172A)),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(modifier = Modifier.padding(12.dp)) {
+                                Text(
+                                    text = "🎯 What NetShield BLOCKS:",
+                                    style = MaterialTheme.typography.labelMedium.copy(
+                                        color = Color(0xFF34D399),
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "• Third-party mobile banner/popup ad networks (DoubleClick, Unity Ads, etc.)\n" +
+                                            "• Cross-app tracking SDKs & Telemetry endpoints\n" +
+                                            "• Malicious redirect and phishing domains\n" +
+                                            "• Browser-based advertising websites",
+                                    style = MaterialTheme.typography.bodySmall.copy(color = Color(0xFFCBD5E1))
+                                )
+                            }
+                        }
+                    }
+
+                    item {
+                        Card(
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFF271C1C)),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(modifier = Modifier.padding(12.dp)) {
+                                Text(
+                                    text = "⚠️ Why YouTube App Ads persist:",
+                                    style = MaterialTheme.typography.labelMedium.copy(
+                                        color = Color(0xFFF87171),
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "• First-Party CDNs: YouTube feeds both videos and ads from the identical web domain (e.g. googlevideo.com). Blocking it would freeze all YouTube videos.\n" +
+                                            "• Stream-Level Injections: Ads are directly merged into the video stream on Google's servers before delivery.\n" +
+                                            "• Encrypted Traffic: As a secure, privacy-preserving DNS filter, NetShield does not perform risky decryption (MITM) of HTTPS payloads.",
+                                    style = MaterialTheme.typography.bodySmall.copy(color = Color(0xFFFCA5A5))
+                                )
+                            }
+                        }
+                    }
+
+                    item {
+                        Card(
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFF0F172A)),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(modifier = Modifier.padding(12.dp)) {
+                                Text(
+                                    text = "🚫 Other Unblockable Content:",
+                                    style = MaterialTheme.typography.labelMedium.copy(
+                                        color = Color(0xFFE2E8F0),
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "• Sponsored feed posts in Instagram, Facebook, or TikTok.\n" +
+                                            "• Native ads integrated directly into the application server code.",
+                                    style = MaterialTheme.typography.bodySmall.copy(color = Color(0xFF94A3B8))
+                                )
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { showLimitationsDialog = false },
+                    colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF14B8A6))
+                ) {
+                    Text("Got It")
+                }
+            },
+            containerColor = Color(0xFF1E293B)
+        )
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -166,16 +285,78 @@ fun MainDashboardScreen(modifier: Modifier = Modifier) {
                 )
             }
 
-            IconButton(
-                onClick = { VpnStateTracker.clearStats() },
-                modifier = Modifier
-                    .background(Color(0xFF1E293B), RoundedCornerShape(12.dp))
-                    .testTag("reset_stats_button")
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                IconButton(
+                    onClick = { showLimitationsDialog = true },
+                    modifier = Modifier
+                        .background(Color(0xFF1E293B), RoundedCornerShape(12.dp))
+                        .testTag("limitations_button")
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = "Show Capabilities & Limitations",
+                        tint = Color(0xFF14B8A6) // Teal
+                    )
+                }
+
+                IconButton(
+                    onClick = { VpnStateTracker.clearStats() },
+                    modifier = Modifier
+                        .background(Color(0xFF1E293B), RoundedCornerShape(12.dp))
+                        .testTag("reset_stats_button")
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "Clear Session",
+                        tint = Color(0xFF38BDF8) // Light Blue
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Educational Banner
+        Card(
+            shape = RoundedCornerShape(12.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFF1E293B).copy(alpha = 0.6f)),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { showLimitationsDialog = true }
+                .padding(vertical = 4.dp)
+        ) {
+            Row(
+                modifier = Modifier.padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = "Clear Session",
-                    tint = Color(0xFF38BDF8) // Light Blue
+                    imageVector = Icons.Default.HelpOutline,
+                    contentDescription = "Info",
+                    tint = Color(0xFF38BDF8),
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Why do some YouTube or Instagram ads persist?",
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                    Text(
+                        text = "Tap to learn how DNS filtering works and its technical limits.",
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = Color(0xFF94A3B8),
+                            fontSize = 11.sp
+                        )
+                    )
+                }
+                Icon(
+                    imageVector = Icons.Default.ChevronRight,
+                    contentDescription = "Open Details",
+                    tint = Color(0xFF64748B),
+                    modifier = Modifier.size(16.dp)
                 )
             }
         }
